@@ -86,15 +86,19 @@ public struct AudioPlayerModeMask: OptionSetType {
     }
 
     public static var Shuffle: AudioPlayerModeMask {
-        return self.init(rawValue: 0b001)
+        return self.init(rawValue: 0b0001)
     }
 
     public static var Repeat: AudioPlayerModeMask {
-        return self.init(rawValue: 0b010)
+        return self.init(rawValue: 0b0010)
     }
 
     public static var RepeatAll: AudioPlayerModeMask {
-        return self.init(rawValue: 0b100)
+        return self.init(rawValue: 0b0100)
+    }
+    
+    public static var Stop: AudioPlayerModeMask {
+        return self.init(rawValue: 0b1000)
     }
 }
 
@@ -1207,12 +1211,15 @@ public class AudioPlayer: NSObject {
             seekToTime(0)
             resume()
             
-            if let currentItem = self.currentItem {
-                delegate?.audioPlayer(self, willStartPlayingItem: currentItem)
-            }
+//            if let currentItem = self.currentItem {
+//                delegate?.audioPlayer(self, willStartPlayingItem: currentItem)
+//            }
         }
         else if hasNext() {
             next()
+        }
+        else if mode.intersect(.Stop) != [] {
+            pause()
         }
         else {
             stop()
