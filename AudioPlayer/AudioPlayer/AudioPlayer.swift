@@ -370,7 +370,7 @@ public class AudioPlayer: NSObject {
     private var qualityIsBeingChanged = false
 
     /// The current number of retry we already tried
-    private var retryCount = 0
+    private var currentRetryCount = 0
 
     /// The timer used to cancel a retry and make a new one
     private var retryTimer: NSTimer?
@@ -994,7 +994,7 @@ public class AudioPlayer: NSObject {
                             player.rate = 0
                         }
 
-                        retryCount = 0
+                        currentRetryCount = 0
 
                         //We cancel the retry we might have asked for
                         retryTimer?.invalidate()
@@ -1172,7 +1172,7 @@ public class AudioPlayer: NSObject {
             return
         }
 
-        if maximumRetryCount > 0 && retryCount < maximumRetryCount {
+        if maximumRetryCount > 0 && currentRetryCount < maximumRetryCount {
             //We can retry
             let cip = currentItemProgression
             let ci = currentItem
@@ -1184,7 +1184,7 @@ public class AudioPlayer: NSObject {
                 player?.seekToTime(CMTime(seconds: cip, preferredTimescale: 1000000000))
             }
 
-            retryCount++
+            currentRetryCount++
 
             //We gonna cancel this current retry and create a new one if the player isn't playing after a certain delay
             let target = ClosureContainer() { [weak self] sender in
@@ -1197,7 +1197,7 @@ public class AudioPlayer: NSObject {
         else {
             retryTimer?.invalidate()
             retryTimer = nil
-            retryCount = 0
+            currentRetryCount = 0
             state = .Failed(.MaximumRetryCountHit)
         }
     }
